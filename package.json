@@ -1,6 +1,6 @@
 {
   "name": "irl-sdk",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "TypeScript SDK for the IRL Engine — cryptographic pre-execution compliance rail",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -26,7 +26,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/GabrielGauss/irl-public-docs"
+    "url": "https://github.com/GabrielGauss/irl-sdk-ts"
   },
   "devDependencies": {
     "tsup": "^8.0.0",

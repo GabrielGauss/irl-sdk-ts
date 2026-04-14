@@ -1,6 +1,15 @@
 # irl-sdk
 
+[![npm version](https://img.shields.io/badge/npm-0.2.0-blue)](https://www.npmjs.com/package/irl-sdk)
+[![Node](https://img.shields.io/badge/node-18%2B-blue)](https://nodejs.org)
+[![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+[![TypeScript](https://img.shields.io/badge/typescript-strict-blue)](https://www.typescriptlang.org)
+
 TypeScript/JavaScript SDK for the [IRL Engine](https://macropulse.live/irl.html) — cryptographic pre-execution compliance rail for autonomous trading agents.
+
+## What's new in 0.2.0
+
+L2 heartbeat auto-fetch — `IRLClient` now fetches and attaches a signed MTA heartbeat on every `authorize()` call. `bindExecution()` added to close the cryptographic chain.
 
 ## Install
 
@@ -141,9 +150,20 @@ const client = new IRLClient({
 });
 ```
 
+---
+
+## Ecosystem
+
+| Repo | Description |
+|---|---|
+| [irl-engine](https://github.com/GabrielGauss/irl-engine) | Core IRL Engine |
+| [irl-sdk-python](https://github.com/GabrielGauss/irl-sdk-python) | Python SDK |
+| [irl-public-docs](https://github.com/GabrielGauss/irl-public-docs) | Public documentation hub |
+| [macropulse](https://github.com/GabrielGauss/macropulse) | MacroPulse — MTA operator |
+
 ## Links
 
-- [IRL Engine](https://macropulse.live/irl.html) — product page
+- [IRL Engine product page](https://macropulse.live/irl.html)
 - [Developer Guide](https://github.com/GabrielGauss/irl-public-docs/blob/master/docs/developer-guide.md)
-- [Live Sandbox](https://irl.macropulse.live/swagger-ui/) — try without an API key
-- [Python SDK](https://pypi.org/project/irl-sdk/)
+- [Live Sandbox + Swagger UI](https://irl.macropulse.live/swagger-ui/)
+- [Python SDK on PyPI](https://pypi.org/project/irl-sdk/)
