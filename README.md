@@ -156,7 +156,7 @@ const client = new IRLClient({
 
 | Repo | Description |
 |---|---|
-| [irl-engine](https://github.com/GabrielGauss/irl-engine) | Core IRL Engine |
+| [IRL-engine-AX](https://github.com/GabrielGauss/IRL-engine-AX) | Core IRL Engine |
 | [irl-sdk-python](https://github.com/GabrielGauss/irl-sdk-python) | Python SDK |
 | [irl-public-docs](https://github.com/GabrielGauss/irl-public-docs) | Public documentation hub |
 | [macropulse](https://github.com/GabrielGauss/macropulse) | MacroPulse — MTA operator |
