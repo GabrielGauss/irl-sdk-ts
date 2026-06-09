@@ -1,15 +1,17 @@
 # irl-sdk
 
-[![npm version](https://img.shields.io/badge/npm-0.2.0-blue)](https://www.npmjs.com/package/irl-sdk)
+[![npm version](https://img.shields.io/badge/npm-0.3.0-blue)](https://www.npmjs.com/package/irl-sdk)
 [![Node](https://img.shields.io/badge/node-18%2B-blue)](https://nodejs.org)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 [![TypeScript](https://img.shields.io/badge/typescript-strict-blue)](https://www.typescriptlang.org)
 
 TypeScript/JavaScript SDK for the [IRL Engine](https://macropulse.live/irl.html) — cryptographic pre-execution compliance rail for autonomous trading agents.
 
-## What's new in 0.2.0
+## What's new in 0.3.0
 
-L2 heartbeat auto-fetch — `IRLClient` now fetches and attaches a signed MTA heartbeat on every `authorize()` call. `bindExecution()` added to close the cryptographic chain.
+- **Retry + backoff**: All API calls retry on 5xx with exponential backoff. Configure via `maxRetries` (default: 3) and `backoffBaseMs` (default: 500 ms).
+- **Multi-agent linking**: `AuthorizeRequest.parent_trace_id` connects sub-agent calls to orchestrators. `getTraceChain()` returns the full causal ancestry.
+- **Extended order types**: `OrderType` union expanded with `VWAP`, `IOC`, `FOK`, `POST_ONLY`, `PEGGED`, `TRAILING_STOP`, `ICEBERG`.
 
 ## Install
 
@@ -78,6 +80,8 @@ await client.close();
 | `apiToken` | `string` | Yes | Bearer token from IRL admin |
 | `mtaUrl` | `string` | No | MTA base URL (default: `https://api.macropulse.live`) |
 | `timeoutMs` | `number` | No | Request timeout in ms (default: `5000`) |
+| `maxRetries` | `number` | No | Max retries on 5xx (default: `3`) |
+| `backoffBaseMs` | `number` | No | Base delay for exponential backoff in ms (default: `500`) |
 
 ### `client.authorize(req)` → `Promise<AuthorizeResult>`
 
@@ -113,6 +117,10 @@ Closes the cryptographic chain after exchange confirmation.
 ### `client.getTrace(trace_id)` → `Promise<Record<string, unknown>>`
 
 Retrieve a full trace for forensic replay or regulator review.
+
+### `client.getTraceChain(trace_id)` → `Promise<Record<string, unknown>>`
+
+Return the full causal ancestry chain for a multi-agent trace. Walks from the given trace to the root orchestrator and returns ancestors plus direct children.
 
 ### `client.fetchHeartbeat()` → `Promise<Heartbeat>`
 

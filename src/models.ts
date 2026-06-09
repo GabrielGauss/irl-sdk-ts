@@ -10,7 +10,11 @@ export type OrderType =
   | "TWAP"
   | "VWAP"
   | "IOC"
-  | "FOK";
+  | "FOK"
+  | "POST_ONLY"
+  | "PEGGED"
+  | "TRAILING_STOP"
+  | "ICEBERG";
 
 export interface AuthorizeRequest {
   /** UUID string — must be registered in the Multi-Agent Registry. */
@@ -42,6 +46,12 @@ export interface AuthorizeRequest {
    * If omitted, IRLClient sets it to Date.now() before submission.
    */
   agent_valid_time?: number;
+
+  /**
+   * Multi-agent linking: trace_id of the orchestrator decision that triggered
+   * this sub-agent call. Enables full causal chain audits.
+   */
+  parent_trace_id?: string;
 }
 
 export interface AuthorizeResult {
@@ -71,4 +81,8 @@ export interface IRLClientOptions {
   mtaUrl?: string;
   /** Fetch timeout in milliseconds. Defaults to 5000. */
   timeoutMs?: number;
+  /** Max retry attempts on 5xx responses. Defaults to 3. */
+  maxRetries?: number;
+  /** Base delay in ms for exponential backoff. Defaults to 500. */
+  backoffBaseMs?: number;
 }

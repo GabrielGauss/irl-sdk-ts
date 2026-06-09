@@ -39,6 +39,8 @@ export class IRLClient {
   private readonly mtaUrl: string;
   private readonly headers: Record<string, string>;
   private readonly timeoutMs: number;
+  private readonly maxRetries: number;
+  private readonly backoffBaseMs: number;
 
   constructor(options: IRLClientOptions) {
     this.irlUrl = options.irlUrl.replace(/\/$/, "");
@@ -48,6 +50,8 @@ export class IRLClient {
       "Content-Type": "application/json",
     };
     this.timeoutMs = options.timeoutMs ?? 5_000;
+    this.maxRetries = options.maxRetries ?? 3;
+    this.backoffBaseMs = options.backoffBaseMs ?? 500;
   }
 
   /**
@@ -65,7 +69,7 @@ export class IRLClient {
 
     const body = this.buildBody(req, heartbeat);
 
-    const resp = await this.fetch(`${this.irlUrl}/irl/authorize`, {
+    const resp = await this.fetchWithRetry(`${this.irlUrl}/irl/authorize`, {
       method: "POST",
       body: JSON.stringify(body),
     });
@@ -96,7 +100,7 @@ export class IRLClient {
     executed_quantity: number;
     execution_price: number;
   }): Promise<{ final_proof: string; status: string }> {
-    const resp = await this.fetch(`${this.irlUrl}/irl/bind-execution`, {
+    const resp = await this.fetchWithRetry(`${this.irlUrl}/irl/bind-execution`, {
       method: "POST",
       body: JSON.stringify(params),
     });
@@ -115,7 +119,24 @@ export class IRLClient {
 
   /** Retrieve a full trace by ID (forensic replay). */
   async getTrace(trace_id: string): Promise<Record<string, unknown>> {
-    const resp = await this.fetch(`${this.irlUrl}/irl/trace/${trace_id}`);
+    const resp = await this.fetchWithRetry(`${this.irlUrl}/irl/trace/${trace_id}`);
+    if (!resp.ok) {
+      const text = await resp.text();
+      throw new IRLError(resp.status, text);
+    }
+    return resp.json() as Promise<Record<string, unknown>>;
+  }
+
+  /**
+   * Return the full ancestry chain for a trace (multi-agent audit trail).
+   *
+   * Walks from the given trace up to the root orchestrator and returns all
+   * ancestor nodes plus the direct children dispatched from this trace.
+   *
+   * @throws {IRLError} on 4xx/5xx (404 if trace not found)
+   */
+  async getTraceChain(trace_id: string): Promise<Record<string, unknown>> {
+    const resp = await this.fetchWithRetry(`${this.irlUrl}/irl/trace/${trace_id}/chain`);
     if (!resp.ok) {
       const text = await resp.text();
       throw new IRLError(resp.status, text);
@@ -164,8 +185,22 @@ export class IRLClient {
 
     if (req.limit_price !== undefined) body["limit_price"] = req.limit_price;
     if (req.stop_price !== undefined) body["stop_price"] = req.stop_price;
+    if (req.parent_trace_id !== undefined) body["parent_trace_id"] = req.parent_trace_id;
 
     return body;
+  }
+
+  /** Fetch with exponential backoff retry on 5xx responses only. */
+  private async fetchWithRetry(url: string, init: RequestInit & { headers?: Record<string, string> } = {}): Promise<Response> {
+    for (let attempt = 0; attempt <= this.maxRetries; attempt++) {
+      const resp = await this.fetch(url, init);
+      if (resp.status < 500 || attempt === this.maxRetries) {
+        return resp;
+      }
+      await sleep(this.backoffBaseMs * Math.pow(2, attempt));
+    }
+    // unreachable — satisfies TS control-flow analysis
+    return this.fetch(url, init);
   }
 
   private fetch(url: string, init: RequestInit & { headers?: Record<string, string> } = {}): Promise<Response> {
@@ -176,6 +211,10 @@ export class IRLClient {
       signal,
     });
   }
+}
+
+function sleep(ms: number): Promise<void> {
+  return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 function serializeAction(action: TradeAction, quantity: number): unknown {
