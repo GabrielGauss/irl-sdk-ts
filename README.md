@@ -1,3 +1,12 @@
+<div align="center">
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset=".github/brand/logo-mono.svg">
+  <img src=".github/brand/logo-green.svg" alt="MacroPulse" width="72" height="72">
+</picture>
+
+<sub>Part of the <a href="https://github.com/GabrielGauss/macropulse-platform">MacroPulse platform</a></sub>
+</div>
+
 # irl-sdk
 
 [![npm version](https://img.shields.io/badge/npm-0.3.0-blue)](https://www.npmjs.com/package/irl-sdk)
@@ -5,7 +14,7 @@
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 [![TypeScript](https://img.shields.io/badge/typescript-strict-blue)](https://www.typescriptlang.org)
 
-TypeScript/JavaScript SDK for the [IRL Engine](https://macropulse.live/irl.html) — cryptographic pre-execution compliance rail for autonomous trading agents.
+TypeScript/JavaScript SDK for the [IRL Engine](https://macropulse.live/irl) — cryptographic pre-execution compliance rail for autonomous trading agents.
 
 ## What's new in 0.3.0
 
@@ -171,7 +180,13 @@ const client = new IRLClient({
 
 ## Links
 
-- [IRL Engine product page](https://macropulse.live/irl.html)
+- [IRL Engine product page](https://macropulse.live/irl)
 - [Developer Guide](https://github.com/GabrielGauss/irl-public-docs/blob/master/docs/developer-guide.md)
 - [Live Sandbox + Swagger UI](https://irl.macropulse.live/swagger-ui/)
 - [Python SDK on PyPI](https://pypi.org/project/irl-sdk/)
+
+---
+
+<div align="center">
+<sub>Part of the <a href="https://github.com/GabrielGauss/macropulse-platform">MacroPulse platform</a> · <a href="https://macropulse.live">macropulse.live</a> · <a href="https://macropulse.live/irl">IRL Engine</a></sub>
+</div>
